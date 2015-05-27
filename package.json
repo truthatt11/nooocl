@@ -1,0 +1,69 @@
+{
+  "name": "nooocl",
+  "version": "0.9.12",
+  "author": {
+    "name": "Gábor Mező aka unbornchikken"
+  },
+  "description": "NOOOCL: Node.js Object Oriented OpenCL Bindings",
+  "homepage": "https://github.com/unbornchikken/nooocl",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unbornchikken/nooocl.git"
+  },
+  "main": "./index",
+  "licenses": "MIT",
+  "engines": [
+    "node >=0.10.0",
+    "iojs >=1.1.0"
+  ],
+  "keywords": [
+    "OpenCL",
+    "GPGPU",
+    "GPU",
+    "SSE",
+    "AVX",
+    "parallel",
+    "native"
+  ],
+  "scripts": {
+    "test": "node ./node_modules/mocha/bin/mocha --expose-gc ./tests"
+  },
+  "dependencies": {
+    "bluebird": "^2.9.14",
+    "ffi-io": "1.x",
+    "lodash": "^3.5.0",
+    "ref": "^1.0.0",
+    "ref-array": "^1.1.0",
+    "ref-struct": "^1.0.0",
+    "weak": "^0.4.0"
+  },
+  "devDependencies": {
+    "jpeg-js": "^0.1.1",
+    "mocha": "^2.2.1"
+  },
+  "gitHead": "6fdcceff175b2ea09e5087c0339c530063fe5223",
+  "bugs": {
+    "url": "https://github.com/unbornchikken/nooocl/issues"
+  },
+  "_id": "nooocl@0.9.12",
+  "_shasum": "018e4019dcd8ce9114e9c23013069a18f078b54f",
+  "_from": "nooocl@",
+  "_npmVersion": "2.7.1",
+  "_nodeVersion": "1.6.1",
+  "_npmUser": {
+    "name": "unbornchikken",
+    "email": "gabor.mezo@outlook.com"
+  },
+  "maintainers": [
+    {
+      "name": "unbornchikken",
+      "email": "gabor.mezo@outlook.com"
+    }
+  ],
+  "dist": {
+    "shasum": "018e4019dcd8ce9114e9c23013069a18f078b54f",
+    "tarball": "http://registry.npmjs.org/nooocl/-/nooocl-0.9.12.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/nooocl/-/nooocl-0.9.12.tgz"
+}
