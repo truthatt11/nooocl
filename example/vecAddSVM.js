@@ -4,10 +4,10 @@
 var fs = require("fs");
 var path = require("path");
 var cwd = __dirname;
-var nooocl = require("../../");
+var nooocl = require("../");
 var CLHost = nooocl.CLHost;
 var CLContext = nooocl.CLContext;
-var CLSVM = nooocl.CLSVM;
+var clSVM = nooocl.clSVM;
 var CLCommandQueue = nooocl.CLCommandQueue;
 var NDRange = nooocl.NDRange;
 var CLError = nooocl.CLError;
@@ -45,7 +45,7 @@ if (!device) {
 }
 
 if (!device) {
-    throw new Error("No capable OpenCL 1.1 device has been found.");
+    throw new Error("No capable OpenCL 2.0 device has been found.");
 }
 else {
     console.log("Running on device: " + device.name + " - " + device.platform.name);
@@ -58,9 +58,12 @@ var queue = new CLCommandQueue(context, device);
 var n = 1000;
 var bytes = n * double.size;
 
-var h_a = new Buffer(n * double.size);
-var h_b = new Buffer(n * double.size);
-var h_c = new Buffer(n * double.size);
+var h_a = new clSVM(context, defs.CL_MEM_READ_ONLY, bytes, 0);
+var h_b = new clSVM(context, defs.CL_MEM_READ_ONLY, bytes, 0);
+var h_c = new clSVM(context, defs.CL_MEM_WRITE_ONLY, bytes, 0);
+
+queue.enqueueSVMMap(false, defs.CL_MAP_WRITE, h_a, bytes, null);
+queue.enqueueSVMMap(false, defs.CL_MAP_WRITE, h_b, bytes, null);
 
 // Initialize vectors on host
 for (var i = 0; i < n; i++) {
@@ -69,17 +72,8 @@ for (var i = 0; i < n; i++) {
     double.set(h_b, offset, Math.cos(i) * Math.cos(i));
 }
 
-// Create device memory buffers
-var d_a = new CLBuffer(context, defs.CL_MEM_READ_ONLY, bytes);
-var d_b = new CLBuffer(context, defs.CL_MEM_READ_ONLY, bytes);
-var d_c = new CLBuffer(context, defs.CL_MEM_WRITE_ONLY, bytes);
-
-// Copy memory buffers
-// Notice: the is no synchronous operations in NOOOCL,
-// so there is no blocking_write parameter there.
-// All writes and reads are asynchronous.
-queue.enqueueWriteBuffer(d_a, 0, bytes, h_a);
-queue.enqueueWriteBuffer(d_b, 0, bytes, h_b);
+queue.enqueueSVMUnmap(h_a, null);
+queue.enqueueSVMUnmap(h_b, null);
 
 // It's time to build the program.
 var kernelSourceCode = fs.readFileSync(path.join(cwd, "vecAdd.cl"), { encoding: "utf8" });
@@ -100,9 +94,9 @@ program.build("-cl-fast-relaxed-math").then(
         // Kernel stuff:
         var kernel = program.createKernel("vecAdd");
 
-        kernel.setArg(0, d_a);
-        kernel.setArg(1, d_b);
-        kernel.setArg(2, d_c);
+        kernel.setArgSVM(0, h_a);
+        kernel.setArgSVM(1, h_b);
+        kernel.setArgSVM(2, h_c);
         // Notice: in NOOOCL you have specify type of value arguments,
         // because there is no C compatible type system exists in JavaScript.
         kernel.setArg(3, n, "uint");
