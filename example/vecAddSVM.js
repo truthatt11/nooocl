@@ -7,7 +7,8 @@ var cwd = __dirname;
 var nooocl = require("../");
 var CLHost = nooocl.CLHost;
 var CLContext = nooocl.CLContext;
-var clSVM = nooocl.clSVM;
+// var CLSVM = nooocl.clSVM;
+var CLSVM = require("../lib/clSVM");
 var CLCommandQueue = nooocl.CLCommandQueue;
 var NDRange = nooocl.NDRange;
 var CLError = nooocl.CLError;
@@ -15,7 +16,7 @@ var ref = require("ref");
 var double = ref.types.double;
 
 // Initialize OpenCL then we get host, device, context, and a queue
-var host = CLHost.createV11();
+var host = CLHost.createV20();
 var defs = host.cl.defs;
 
 var platforms = host.getPlatforms();
@@ -58,9 +59,25 @@ var queue = new CLCommandQueue(context, device);
 var n = 1000;
 var bytes = n * double.size;
 
-var h_a = new clSVM(context, defs.CL_MEM_READ_ONLY, bytes, 0);
-var h_b = new clSVM(context, defs.CL_MEM_READ_ONLY, bytes, 0);
-var h_c = new clSVM(context, defs.CL_MEM_WRITE_ONLY, bytes, 0);
+/*
+var cl20 = require("../lib/cl20");
+var abd = new cl20();
+
+console.log(nooocl.clSVM == null);
+console.log(CLSVM == null);
+console.log(CLHost == null);
+console.log(host == null);
+console.log(CLCommandQueue == null);
+console.log(CLContext == null);
+console.log(nooocl.CL11 == null);
+console.log(nooocl.CL12 == null);
+console.log(nooocl.CL20 == null);
+console.log(abd == null);
+*/
+
+var h_a = new CLSVM(context, defs.CL_MEM_READ_ONLY, bytes, 0);
+var h_b = new CLSVM(context, defs.CL_MEM_READ_ONLY, bytes, 0);
+var h_c = new CLSVM(context, defs.CL_MEM_WRITE_ONLY, bytes, 0);
 
 queue.enqueueSVMMap(false, defs.CL_MAP_WRITE, h_a, bytes, null);
 queue.enqueueSVMMap(false, defs.CL_MAP_WRITE, h_b, bytes, null);
