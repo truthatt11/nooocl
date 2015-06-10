@@ -85,13 +85,14 @@ queue.enqueueSVMMap(false, defs.CL_MAP_WRITE, h_b, bytes, null);
 
 // Initialize vectors on host
 for (var i = 0; i < n; i++) {
-    var offset = i * double.size;
 /*
+    var offset = i * double.size;
     double.set(h_a.handle, offset, Math.sin(i) * Math.sin(i));
     double.set(h_b.handle, offset, Math.cos(i) * Math.cos(i));
 */
     h_a.handle[i] = Math.sin(i) * Math.sin(i);
     h_b.handle[i] = Math.cos(i) * Math.cos(i);
+	console.log("a="+h_a.handle[i]);
 }
 
 queue.enqueueSVMUnmap(h_a, null);
@@ -139,18 +140,28 @@ program.build("-cl-fast-relaxed-math -cl-std=CL2.0").then(
         // We should query a waitable queue which returns an event for each enqueue operations,
         // and the event's promise can be used for continuation of the control flow on the host side.
         console.log("Waiting for result.");
-        queue.waitable().enqueueReadBuffer(d_c, 0, bytes, h_c).promise
+        queue.waitable().enqueueSVMMap(true, defs.CL_MAP_READ ,h_c, bytes, null).promise
             .then(function() {
+                queue.enqueueSVMMap(true, defs.CL_MAP_READ, h_a, bytes, null);
+                queue.enqueueSVMMap(true, defs.CL_MAP_READ, h_b, bytes, null);
                 // Data gets back to host, we're done:
 
                 var sum = 0;
                 for (var i = 0; i < n; i++) {
+/*
                     var offset = i * double.size;
-                    sum += double.get(h_c, offset);
+*/
+                    sum += h_c.handle[i];
+                    console.log("a=" + h_a.handle[i]);
+                    console.log("b=" + h_b.handle[i]);
+                    console.log("c=" + h_c.handle[i]);
                 }
 
                 console.log("Final result: " + sum / n);
             });
+        queue.enqueueSVMUnmap(h_a, null);
+        queue.enqueueSVMUnmap(h_b, null);
+        queue.enqueueSVMUnmap(h_c, null);
     });
 
 console.log("(Everything after this point is asynchronous.)");
