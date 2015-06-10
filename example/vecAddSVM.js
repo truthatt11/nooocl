@@ -79,14 +79,19 @@ var h_a = new CLSVM(context, defs.CL_MEM_READ_ONLY, bytes, 0);
 var h_b = new CLSVM(context, defs.CL_MEM_READ_ONLY, bytes, 0);
 var h_c = new CLSVM(context, defs.CL_MEM_WRITE_ONLY, bytes, 0);
 
+//console.log(queue.cl.libName);
 queue.enqueueSVMMap(false, defs.CL_MAP_WRITE, h_a, bytes, null);
 queue.enqueueSVMMap(false, defs.CL_MAP_WRITE, h_b, bytes, null);
 
 // Initialize vectors on host
 for (var i = 0; i < n; i++) {
     var offset = i * double.size;
-    double.set(h_a, offset, Math.sin(i) * Math.sin(i));
-    double.set(h_b, offset, Math.cos(i) * Math.cos(i));
+/*
+    double.set(h_a.handle, offset, Math.sin(i) * Math.sin(i));
+    double.set(h_b.handle, offset, Math.cos(i) * Math.cos(i));
+*/
+    h_a.handle[i] = Math.sin(i) * Math.sin(i);
+    h_b.handle[i] = Math.cos(i) * Math.cos(i);
 }
 
 queue.enqueueSVMUnmap(h_a, null);
@@ -98,7 +103,7 @@ var program = context.createProgram(kernelSourceCode);
 
 console.log("Building ...");
 // Building is always asynchronous in NOOOCL!
-program.build("-cl-fast-relaxed-math").then(
+program.build("-cl-fast-relaxed-math -cl-std=CL2.0").then(
     function () {
         var buildStatus = program.getBuildStatus(device);
         var buildLog = program.getBuildLog(device);
