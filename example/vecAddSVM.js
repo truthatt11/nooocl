@@ -80,7 +80,7 @@ var h_b = new CLSVM(context, defs.CL_MEM_READ_ONLY, bytes, 0);
 var h_c = new CLSVM(context, defs.CL_MEM_WRITE_ONLY, bytes, 0);
 
 //console.log(queue.cl.libName);
-queue.enqueueSVMMap(false, defs.CL_MAP_WRITE, h_a, bytes, null);
+queue.enqueueSVMMap(false, defs.CL_MAP_WRITE | defs.CL_MAP_READ, h_a, bytes, null);
 queue.enqueueSVMMap(false, defs.CL_MAP_WRITE, h_b, bytes, null);
 
 // Initialize vectors on host
@@ -92,7 +92,8 @@ for (var i = 0; i < n; i++) {
 */
     h_a.handle[i] = Math.sin(i) * Math.sin(i);
     h_b.handle[i] = Math.cos(i) * Math.cos(i);
-	console.log("a="+h_a.handle[i]);
+    console.log("a="+h_a.handle[i]+", i="+i);
+    console.log(typeof h_a.handle);
 }
 
 queue.enqueueSVMUnmap(h_a, null);
