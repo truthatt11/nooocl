@@ -1,6 +1,6 @@
 {
   "name": "nooocl",
-  "version": "0.9.12",
+  "version": "0.11.1",
   "author": {
     "name": "Gábor Mező aka unbornchikken"
   },
@@ -8,7 +8,7 @@
   "homepage": "https://github.com/unbornchikken/nooocl",
   "repository": {
     "type": "git",
-    "url": "https://github.com/unbornchikken/nooocl.git"
+    "url": "git+https://github.com/unbornchikken/nooocl.git"
   },
   "main": "./index",
   "licenses": "MIT",
@@ -26,33 +26,37 @@
     "native"
   ],
   "scripts": {
-    "test": "node ./node_modules/mocha/bin/mocha --expose-gc ./tests"
+    "test": "mocha --expose-gc ./tests -t 60000"
   },
   "dependencies": {
-    "bluebird": "^2.9.14",
-    "ffi-io": "1.x",
-    "lodash": "^3.5.0",
-    "ref": "^1.0.0",
-    "ref-array": "^1.1.0",
-    "ref-struct": "^1.0.0",
-    "weak": "^0.4.0"
+    "bluebird": "2",
+    "ffi": "2",
+    "lodash": "3",
+    "ref": "1",
+    "ref-array": "1",
+    "ref-struct": "1",
+    "weak": "*"
   },
   "devDependencies": {
-    "jpeg-js": "^0.1.1",
-    "mocha": "^2.2.1"
+    "jpeg-js": "*",
+    "mocha": "*"
   },
-  "gitHead": "6fdcceff175b2ea09e5087c0339c530063fe5223",
+  "gitHead": "95eb0f783a26f91600b01e473d7177793a5b3d81",
   "bugs": {
     "url": "https://github.com/unbornchikken/nooocl/issues"
   },
-  "_id": "nooocl@0.9.12",
-  "_shasum": "018e4019dcd8ce9114e9c23013069a18f078b54f",
-  "_from": "nooocl@",
-  "_npmVersion": "2.7.1",
-  "_nodeVersion": "1.6.1",
+  "_id": "nooocl@0.11.1",
+  "_shasum": "1d5ab81ddbcc0f90aa338b4239c976453b979112",
+  "_from": "nooocl@latest",
+  "_npmVersion": "3.8.2",
+  "_nodeVersion": "4.2.4",
   "_npmUser": {
     "name": "unbornchikken",
     "email": "gabor.mezo@outlook.com"
+  },
+  "dist": {
+    "shasum": "1d5ab81ddbcc0f90aa338b4239c976453b979112",
+    "tarball": "https://registry.npmjs.org/nooocl/-/nooocl-0.11.1.tgz"
   },
   "maintainers": [
     {
@@ -60,10 +64,10 @@
       "email": "gabor.mezo@outlook.com"
     }
   ],
-  "dist": {
-    "shasum": "018e4019dcd8ce9114e9c23013069a18f078b54f",
-    "tarball": "http://registry.npmjs.org/nooocl/-/nooocl-0.9.12.tgz"
+  "_npmOperationalInternal": {
+    "host": "packages-13-west.internal.npmjs.com",
+    "tmp": "tmp/nooocl-0.11.1.tgz_1458806206222_0.642151897540316"
   },
   "directories": {},
-  "_resolved": "https://registry.npmjs.org/nooocl/-/nooocl-0.9.12.tgz"
+  "_resolved": "https://registry.npmjs.org/nooocl/-/nooocl-0.11.1.tgz"
 }
