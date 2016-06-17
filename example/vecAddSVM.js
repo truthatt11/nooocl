@@ -7,8 +7,7 @@ var cwd = __dirname;
 var nooocl = require("../");
 var CLHost = nooocl.CLHost;
 var CLContext = nooocl.CLContext;
-// var CLSVM = nooocl.clSVM;
-var CLSVM = require("../lib/clSVM");
+var CLSVM = nooocl.clSVM;
 var CLCommandQueue = nooocl.CLCommandQueue;
 var NDRange = nooocl.NDRange;
 var CLError = nooocl.CLError;
@@ -59,43 +58,32 @@ var queue = new CLCommandQueue(context, device);
 var n = 1000;
 var bytes = n * double.size;
 
-/*
-var cl20 = require("../lib/cl20");
-var abd = new cl20();
-
 console.log(nooocl.clSVM == null);
 console.log(CLSVM == null);
-console.log(CLHost == null);
-console.log(host == null);
-console.log(CLCommandQueue == null);
-console.log(CLContext == null);
-console.log(nooocl.CL11 == null);
-console.log(nooocl.CL12 == null);
-console.log(nooocl.CL20 == null);
-console.log(abd == null);
-*/
 
-var h_a = new CLSVM(context, defs.CL_MEM_READ_ONLY, bytes, 0);
-var h_b = new CLSVM(context, defs.CL_MEM_READ_ONLY, bytes, 0);
+var h_a = new CLSVM(context, defs.CL_MEM_READ_WRITE, bytes, 0);
+var h_b = new CLSVM(context, defs.CL_MEM_READ_WRITE, bytes, 0);
 var h_c = new CLSVM(context, defs.CL_MEM_WRITE_ONLY, bytes, 0);
 
 //console.log(queue.cl.libName);
-queue.enqueueSVMMap(false, defs.CL_MAP_WRITE | defs.CL_MAP_READ, h_a, bytes, null);
-queue.enqueueSVMMap(false, defs.CL_MAP_WRITE, h_b, bytes, null);
+queue.enqueueSVMMap(false, defs.CL_MAP_WRITE | defs.CL_MAP_READ, h_a.handle, bytes, null);
+queue.enqueueSVMMap(false, defs.CL_MAP_WRITE, h_b.handle, bytes, null);
+
+var ha = ref.reinterpret(h_a.handle, bytes, 0);
+var hb = ref.reinterpret(h_b.handle, bytes, 0);
+var hc = ref.reinterpret(h_c.handle, bytes, 0);
 
 // Initialize vectors on host
 for (var i = 0; i < n; i++) {
-/*
-    var offset = i * double.size;
-    double.set(h_a.handle, offset, Math.sin(i) * Math.sin(i));
-    double.set(h_b.handle, offset, Math.cos(i) * Math.cos(i));
-*/
-    h_a.handle[i] = Math.sin(i) * Math.sin(i);
-    h_b.handle[i] = Math.cos(i) * Math.cos(i);
-    console.log("a="+h_a.handle[i]+", i="+i);
-    console.log(typeof h_a.handle);
+    ref.types.double.set(ha, i*ref.types.double.size, Math.sin(i) * Math.sin(i));
+    ref.types.double.set(hb, i*ref.types.double.size, Math.cos(i) * Math.cos(i));
 }
-
+/*
+for (var i=0; i<n; i++) {
+    console.log("a="+ref.types.double.get(ha, i*ref.types.double.size)+", i="+i);
+    console.log("b="+ref.types.double.get(hb, i*ref.types.double.size)+", i="+i);
+}
+*/
 queue.enqueueSVMUnmap(h_a, null);
 queue.enqueueSVMUnmap(h_b, null);
 
@@ -148,14 +136,17 @@ program.build("-cl-fast-relaxed-math -cl-std=CL2.0").then(
                 // Data gets back to host, we're done:
 
                 var sum = 0;
+                hc = ref.reinterpret(h_c.handle, bytes, 0);
+                ha = ref.reinterpret(h_a.handle, bytes, 0);
+                hb = ref.reinterpret(h_b.handle, bytes, 0);
                 for (var i = 0; i < n; i++) {
-/*
-                    var offset = i * double.size;
-*/
-                    sum += h_c.handle[i];
-                    console.log("a=" + h_a.handle[i]);
-                    console.log("b=" + h_b.handle[i]);
-                    console.log("c=" + h_c.handle[i]);
+                    sum += ref.types.double.get(hc, i*ref.types.double.size);
+                
+                    console.log("i="+i);
+                    console.log("a=" + ref.types.double.get(ha, i*ref.types.double.size));
+                    console.log("b=" + ref.types.double.get(hb, i*ref.types.double.size));
+                    console.log("c=" + ref.types.double.get(hc, i*ref.types.double.size));
+                
                 }
 
                 console.log("Final result: " + sum / n);
